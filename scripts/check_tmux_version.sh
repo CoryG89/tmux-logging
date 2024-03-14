@@ -8,47 +8,47 @@ get_tmux_option() {
     local default_value=$2
     local option_value
     option_value=$(tmux show-option -gqv "$option")
-	if [ -z "$option_value" ]; then
-		echo "$default_value"
-	else
-		echo "$option_value"
-	fi
+    if [ -z "$option_value" ]; then
+        echo "$default_value"
+    else
+        echo "$option_value"
+    fi
 }
 
 # Ensures a message is displayed for 5 seconds in tmux prompt.
 # Does not override the 'display-time' tmux option.
 display_message() {
-	local message="$1"
+    local message="$1"
 
-	# display_duration defaults to 5 seconds, if not passed as an argument
-	if [ "$#" -eq 2 ]; then
-		local display_duration="$2"
-	else
-		local display_duration="5000"
-	fi
+    # display_duration defaults to 5 seconds, if not passed as an argument
+    if [ "$#" -eq 2 ]; then
+        local display_duration="$2"
+    else
+        local display_duration="5000"
+    fi
 
-	# saves user-set 'display-time' option
+    # saves user-set 'display-time' option
     local saved_display_time
     saved_display_time=$(get_tmux_option "display-time" "750")
 
-	# sets message display time to 5 seconds
-	tmux set-option -gq display-time "$display_duration"
+    # sets message display time to 5 seconds
+    tmux set-option -gq display-time "$display_duration"
 
-	# displays message
-	tmux display-message "$message"
+    # displays message
+    tmux display-message "$message"
 
-	# restores original 'display-time' value
-	tmux set-option -gq display-time "$saved_display_time"
+    # restores original 'display-time' value
+    tmux set-option -gq display-time "$saved_display_time"
 }
 
 # this is used to get "clean" integer version number. Examples:
 # `tmux 1.9` => `19`
 # `1.9a`     => `19`
 get_digits_from_string() {
-	local string="$1"
+    local string="$1"
     local only_digits
     only_digits="$(echo "$string" | tr -dC '[:digit:]')"
-	echo "$only_digits"
+    echo "$only_digits"
 }
 
 tmux_version_int() {
@@ -58,20 +58,20 @@ tmux_version_int() {
 }
 
 unsupported_version_message() {
-	if [ -n "$UNSUPPORTED_MSG" ]; then
-		echo "$UNSUPPORTED_MSG"
-	else
-		echo "Error, Tmux version unsupported! Please install Tmux version $VERSION or greater!"
-	fi
+    if [ -n "$UNSUPPORTED_MSG" ]; then
+        echo "$UNSUPPORTED_MSG"
+    else
+        echo "Error, Tmux version unsupported! Please install Tmux version $VERSION or greater!"
+    fi
 }
 
 exit_if_unsupported_version() {
-	local current_version="$1"
-	local supported_version="$2"
-	if [ "${current_version/next-/}" -lt "$supported_version" ]; then
-		display_message "$(unsupported_version_message)"
-		exit 1
-	fi
+    local current_version="$1"
+    local supported_version="$2"
+    if [ "${current_version/next-/}" -lt "$supported_version" ]; then
+        display_message "$(unsupported_version_message)"
+        exit 1
+    fi
 }
 
 main() {
@@ -79,6 +79,6 @@ main() {
     supported_version_int="$(get_digits_from_string "$VERSION")"
     local current_version_int
     current_version_int="$(tmux_version_int)"
-	exit_if_unsupported_version "$current_version_int" "$supported_version_int"
+    exit_if_unsupported_version "$current_version_int" "$supported_version_int"
 }
 main

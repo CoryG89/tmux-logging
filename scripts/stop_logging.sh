@@ -13,7 +13,7 @@ main() {
         file=$(expand_tmux_format_path "${logging_full_filename}")
     fi
     tmux pipe-pane
-	display_message "Ended logging to $file"
+    display_message "Ended logging to $file"
 }
 
 main
