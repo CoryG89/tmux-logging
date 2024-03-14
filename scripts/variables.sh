@@ -1,4 +1,4 @@
-SUPPORTED_VERSION="1.9"
+#!/usr/bin/env bash
 
 # Key binding options and defaults
 
@@ -30,7 +30,7 @@ default_logging_filename="tmux-${filename_suffix}"
 logging_filename=$(tmux show-option -gqv "@logging-filename")
 logging_filename=${logging_filename:-$default_logging_filename}
 
-logging_full_filename="${logging_path}/${logging_filename}"
+export logging_full_filename="${logging_path}/${logging_filename}"
 
 # Screen capture options
 default_screen_capture_path="$HOME"
@@ -41,7 +41,7 @@ default_screen_capture_filename="tmux-screen-capture-${filename_suffix}"
 screen_capture_filename=$(tmux show-option -gqv "@screen-capture-filename")
 screen_capture_filename=${screen_capture_filename:-$default_screen_capture_filename}
 
-screen_capture_full_filename="${screen_capture_path}/${screen_capture_filename}"
+export screen_capture_full_filename="${screen_capture_path}/${screen_capture_filename}"
 
 # Save complete history options
 default_save_complete_history_path="$HOME"
@@ -52,4 +52,9 @@ default_save_complete_history_filename="tmux-history-${filename_suffix}"
 save_complete_history_filename=$(tmux show-option -gqv "@save-complete-history-filename")
 save_complete_history_filename=${save_complete_history_filename:-$default_save_complete_history_filename}
 
-save_complete_history_full_filename="${save_complete_history_path}/${save_complete_history_filename}"
+export save_complete_history_full_filename="${save_complete_history_path}/${save_complete_history_filename}"
+
+
+default_compression_enabled=0
+compression_enabled=$(tmux show-option -gqv "@compression-enabled")
+export compression_enabled=${compression_enabled:-$default_compression_enabled}

@@ -4,9 +4,10 @@ VERSION="$1"
 UNSUPPORTED_MSG="$2"
 
 get_tmux_option() {
-	local option=$1
-	local default_value=$2
-	local option_value=$(tmux show-option -gqv "$option")
+    local option=$1
+    local default_value=$2
+    local option_value
+    option_value=$(tmux show-option -gqv "$option")
 	if [ -z "$option_value" ]; then
 		echo "$default_value"
 	else
@@ -27,7 +28,8 @@ display_message() {
 	fi
 
 	# saves user-set 'display-time' option
-	local saved_display_time=$(get_tmux_option "display-time" "750")
+    local saved_display_time
+    saved_display_time=$(get_tmux_option "display-time" "750")
 
 	# sets message display time to 5 seconds
 	tmux set-option -gq display-time "$display_duration"
@@ -44,13 +46,15 @@ display_message() {
 # `1.9a`     => `19`
 get_digits_from_string() {
 	local string="$1"
-	local only_digits="$(echo "$string" | tr -dC '[:digit:]')"
+    local only_digits
+    only_digits="$(echo "$string" | tr -dC '[:digit:]')"
 	echo "$only_digits"
 }
 
 tmux_version_int() {
-	local tmux_version_string=$(tmux -V)
-	echo "$(get_digits_from_string "$tmux_version_string")"
+    local tmux_version_string
+    tmux_version_string=$(tmux -V)
+    get_digits_from_string "$tmux_version_string"
 }
 
 unsupported_version_message() {
@@ -64,15 +68,17 @@ unsupported_version_message() {
 exit_if_unsupported_version() {
 	local current_version="$1"
 	local supported_version="$2"
-	if [ "$current_version" -lt "$supported_version" ]; then
+	if [ "${current_version/next-/}" -lt "$supported_version" ]; then
 		display_message "$(unsupported_version_message)"
 		exit 1
 	fi
 }
 
 main() {
-	local supported_version_int="$(get_digits_from_string "$VERSION")"
-	local current_version_int="$(tmux_version_int)"
+    local supported_version_int
+    supported_version_int="$(get_digits_from_string "$VERSION")"
+    local current_version_int
+    current_version_int="$(tmux_version_int)"
 	exit_if_unsupported_version "$current_version_int" "$supported_version_int"
 }
 main
